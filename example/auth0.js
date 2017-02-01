@@ -54,17 +54,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Authentication = __webpack_require__(13);
-	var Management = __webpack_require__(44);
-	var WebAuth = __webpack_require__(45);
-	var version = __webpack_require__(16);
-	
-	module.exports = {
-	  Authentication: Authentication,
-	  Management: Management,
-	  WebAuth: WebAuth,
-	  version: version.raw
-	};
+	module.exports = __webpack_require__(49);
 
 
 /***/ },
@@ -75,8 +65,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* eslint-disable no-restricted-syntax */
 	/* eslint-disable guard-for-in */
 	
-	var assert = __webpack_require__(2);
-	var objectAssign = __webpack_require__(36);
+	var assert = __webpack_require__(4);
+	var objectAssign = __webpack_require__(40);
 	
 	function pick(object, keys) {
 	  return keys.reduce(function (prev, key) {
@@ -85,6 +75,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    return prev;
 	  }, {});
+	}
+	
+	function getKeysNotIn(obj, allowedKeys) {
+	  var notAllowed = [];
+	  for (var key in obj) {
+	    if (allowedKeys.indexOf(key) === -1) {
+	      notAllowed.push(key);
+	    }
+	  }
+	  return notAllowed;
 	}
 	
 	function objectValues(obj) {
@@ -151,10 +151,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function toSnakeCase(object, exceptions) {
-	  if (typeof object !== 'object' || assert.isArray(object) || !object === null) {
+	  if (typeof object !== 'object' || assert.isArray(object) || object === null) {
 	    return object;
 	  }
-	
 	  exceptions = exceptions || [];
 	
 	  return Object.keys(object).reduce(function (p, key) {
@@ -165,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	function toCamelCase(object, exceptions) {
-	  if (typeof object !== 'object' || assert.isArray(object) || !object === null) {
+	  if (typeof object !== 'object' || assert.isArray(object) || object === null) {
 	    return object;
 	  }
 	
@@ -184,6 +183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  blacklist: blacklist,
 	  merge: merge,
 	  pick: pick,
+	  getKeysNotIn: getKeysNotIn,
 	  extend: extend
 	};
 
@@ -192,9 +192,78 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
+	/* WEBPACK VAR INJECTION */(function(global) {function redirect(url) {
+	  global.window.location = url;
+	}
+	
+	function getDocument() {
+	  return global.window.document;
+	}
+	
+	function getWindow() {
+	  return global.window;
+	}
+	
+	module.exports = {
+	  redirect: redirect,
+	  getDocument: getDocument,
+	  getWindow: getWindow
+	};
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (name, context, definition) {
+	  if (typeof module !== 'undefined' && module.exports) module.exports = definition();
+	  else if (true) !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  else context[name] = definition();
+	})('urljoin', this, function () {
+	
+	  function normalize (str, options) {
+	
+	    // make sure protocol is followed by two slashes
+	    str = str.replace(/:\//g, '://');
+	
+	    // remove consecutive slashes
+	    str = str.replace(/([^:\s])\/+/g, '$1/');
+	
+	    // remove trailing slash before parameters or hash
+	    str = str.replace(/\/(\?|&|#[^!])/g, '$1');
+	
+	    // replace ? in parameters with &
+	    str = str.replace(/(\?.+)\?/g, '$1&');
+	
+	    return str;
+	  }
+	
+	  return function () {
+	    var input = arguments;
+	    var options = {};
+	
+	    if (typeof arguments[0] === 'object') {
+	      // new syntax with array and options
+	      input = arguments[0];
+	      options = arguments[1] || {};
+	    }
+	
+	    var joined = [].slice.call(input, 0).join('/');
+	    return normalize(joined, options);
+	  };
+	
+	});
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
 	var toString = Object.prototype.toString;
 	
 	function attribute(o, attr, type, text) {
+	  type = type === 'array' ? 'object' : type;
 	  if (o && typeof o[attr] !== type) {
 	    throw new Error(text);
 	  }
@@ -263,78 +332,40 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (name, context, definition) {
-	  if (typeof module !== 'undefined' && module.exports) module.exports = definition();
-	  else if (true) !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  else context[name] = definition();
-	})('urljoin', this, function () {
-	
-	  function normalize (str, options) {
-	
-	    // make sure protocol is followed by two slashes
-	    str = str.replace(/:\//g, '://');
-	
-	    // remove consecutive slashes
-	    str = str.replace(/([^:\s])\/+/g, '$1/');
-	
-	    // remove trailing slash before parameters or hash
-	    str = str.replace(/\/(\?|&|#[^!])/g, '$1');
-	
-	    // replace ? in parameters with &
-	    str = str.replace(/(\?.+)\?/g, '$1&');
-	
-	    return str;
-	  }
-	
-	  return function () {
-	    var input = arguments;
-	    var options = {};
-	
-	    if (typeof arguments[0] === 'object') {
-	      // new syntax with array and options
-	      input = arguments[0];
-	      options = arguments[1] || {};
-	    }
-	
-	    var joined = [].slice.call(input, 0).join('/');
-	    return normalize(joined, options);
-	  };
-	
-	});
-
-
-/***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {function redirect(url) {
-	  global.window.location = url;
+	function build(params, glue, uriEncodedValues) {
+	  glue = glue || '&';
+	  uriEncodedValues = uriEncodedValues !== false;
+	
+	  return Object.keys(params).reduce(function (arr, key) {
+	    if (typeof params[key] !== 'undefined') {
+	      arr.push(key + '=' + (uriEncodedValues ? encodeURIComponent(params[key]) : params[key]));
+	    }
+	    return arr;
+	  }, []).join(glue);
 	}
 	
-	function getDocument() {
-	  return global.window.document;
-	}
-	
-	function getWindow() {
-	  return global.window;
+	function parse(qs) {
+	  return qs.split('&').reduce(function (prev, curr) {
+	    var param = curr.split('=');
+	    prev[param[0]] = param[1];
+	    return prev;
+	  }, {});
 	}
 	
 	module.exports = {
-	  redirect: redirect,
-	  getDocument: getDocument,
-	  getWindow: getWindow
+	  build: build,
+	  parse: parse
 	};
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var error = __webpack_require__(15);
+	var error = __webpack_require__(16);
 	var objectHelper = __webpack_require__(1);
 	
 	function wrapCallback(cb, options) {
@@ -404,7 +435,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = { raw: '8.2.0' };
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	/* eslint-disable no-console */
@@ -425,7 +463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
 	/**
@@ -444,40 +482,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	function build(params) {
-	  return Object.keys(params).reduce(function (arr, key) {
-	    if (typeof params[key] !== 'undefined') {
-	      arr.push(key + '=' + encodeURIComponent(params[key]));
-	    }
-	    return arr;
-	  }, []).join('&');
-	}
-	
-	function parse(qs) {
-	  return qs.split('&').reduce(function (prev, curr) {
-	    var param = curr.split('=');
-	    prev[param[0]] = param[1];
-	    return prev;
-	  }, {});
-	}
-	
-	module.exports = {
-	  build: build,
-	  parse: parse
-	};
-
-
-/***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* eslint-disable no-param-reassign */
-	var request = __webpack_require__(12);
-	var base64Url = __webpack_require__(14);
-	var version = __webpack_require__(16);
+	var request = __webpack_require__(13);
+	var base64Url = __webpack_require__(15);
+	var version = __webpack_require__(7);
 	
 	// ------------------------------------------------ RequestWrapper
 	
@@ -587,7 +598,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict'
@@ -707,10 +718,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var base64 = __webpack_require__(10);
+	var base64 = __webpack_require__(11);
 	
 	function padding(str) {
 	  var mod = (str.length % 4);
@@ -782,7 +793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -801,9 +812,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var Emitter = __webpack_require__(18);
 	var RequestBase = __webpack_require__(28);
-	var isObject = __webpack_require__(7);
+	var isObject = __webpack_require__(9);
 	var isFunction = __webpack_require__(27);
 	var ResponseBase = __webpack_require__(29);
+	var shouldRetry = __webpack_require__(30);
 	
 	/**
 	 * Noop.
@@ -1078,8 +1090,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @api private
 	 */
 	
-	function Response(req, options) {
-	  options = options || {};
+	function Response(req) {
 	  this.req = req;
 	  this.xhr = this.req.xhr;
 	  // responseText is accessible only if responseType is '' or 'text' and on older browsers
@@ -1315,18 +1326,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
-	* Add query-string `val`.
-	*
-	* Examples:
-	*
-	*   request.get('/shoes')
-	*     .query('size=10')
-	*     .query({ color: 'blue' })
-	*
-	* @param {Object|String} val
-	* @return {Request} for chaining
-	* @api public
-	*/
+	 * Add query-string `val`.
+	 *
+	 * Examples:
+	 *
+	 *   request.get('/shoes')
+	 *     .query('size=10')
+	 *     .query({ color: 'blue' })
+	 *
+	 * @param {Object|String} val
+	 * @return {Request} for chaining
+	 * @api public
+	 */
 	
 	Request.prototype.query = function(val){
 	  if ('string' != typeof val) val = serialize(val);
@@ -1377,10 +1388,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	Request.prototype.callback = function(err, res){
+	  // console.log(this._retries, this._maxRetries)
+	  if (this._maxRetries && this._retries++ < this._maxRetries && shouldRetry(err, res)) {
+	    return this._retry();
+	  }
+	
 	  var fn = this._callback;
 	  this.clearTimeout();
 	
 	  if (err) {
+	    if (this._maxRetries) err.retries = this._retries - 1;
 	    this.emit('error', err);
 	  }
 	
@@ -1464,10 +1481,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	Request.prototype.end = function(fn){
-	  var self = this;
-	  var xhr = this.xhr = request.getXHR();
-	  var data = this._formData || this._data;
-	
 	  if (this._endCalled) {
 	    console.warn("Warning: .end() was called twice. This is not supported in superagent");
 	  }
@@ -1475,6 +1488,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  // store callback
 	  this._callback = fn || noop;
+	
+	  // querystring
+	  this._appendQueryString();
+	
+	  return this._end();
+	};
+	
+	Request.prototype._end = function() {
+	  var self = this;
+	  var xhr = this.xhr = request.getXHR();
+	  var data = this._formData || this._data;
+	
+	  this._setTimeouts();
 	
 	  // state change
 	  xhr.onreadystatechange = function(){
@@ -1518,11 +1544,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // https://connect.microsoft.com/IE/feedback/details/837245/xmlhttprequest-upload-throws-invalid-argument-when-used-from-web-worker-context
 	    }
 	  }
-	
-	  // querystring
-	  this._appendQueryString();
-	
-	  this._setTimeouts();
 	
 	  // initiate request
 	  try {
@@ -1624,16 +1645,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
-	 * DELETE `url` with optional callback `fn(res)`.
+	 * DELETE `url` with optional `data` and callback `fn(res)`.
 	 *
 	 * @param {String} url
+	 * @param {Mixed} [data]
 	 * @param {Function} [fn]
 	 * @return {Request}
 	 * @api public
 	 */
 	
-	function del(url, fn){
+	function del(url, data, fn){
 	  var req = request('DELETE', url);
+	  if ('function' == typeof data) fn = data, data = null;
+	  if (data) req.send(data);
 	  if (fn) req.end(fn);
 	  return req;
 	};
@@ -1697,21 +1721,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
-	var RequestBuilder = __webpack_require__(9);
-	var qs = __webpack_require__(8);
+	var RequestBuilder = __webpack_require__(10);
+	var qs = __webpack_require__(5);
 	var objectHelper = __webpack_require__(1);
-	var assert = __webpack_require__(2);
-	var responseHandler = __webpack_require__(5);
-	var parametersWhitelist = __webpack_require__(37);
-	var Warn = __webpack_require__(6);
+	var assert = __webpack_require__(4);
+	var responseHandler = __webpack_require__(6);
+	var parametersWhitelist = __webpack_require__(41);
+	var Warn = __webpack_require__(8);
 	
-	var PasswordlessAuthentication = __webpack_require__(33);
-	var DBConnection = __webpack_require__(32);
+	var PasswordlessAuthentication = __webpack_require__(37);
+	var DBConnection = __webpack_require__(36);
 	
 	/**
 	 * Auth0 Authentication API client
@@ -1783,7 +1807,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /* eslint-disable */
 	  assert.check(params, { type: 'object', message: 'options parameter is not valid' }, {
 	    clientID: { type: 'string', message: 'clientID option is required' },
-	    redirectUri: { type: 'string', message: 'redirectUri option is required' },
+	    redirectUri: { optional: true, type: 'string', message: 'redirectUri option is required' },
 	    responseType: { type: 'string', message: 'responseType option is required' },
 	    nonce: { type: 'string', message: 'nonce option is required', condition: function(o) {
 	      return o.responseType.indexOf('code') === -1 && o.responseType.indexOf('id_token') !== -1;
@@ -1803,7 +1827,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  params = objectHelper.toSnakeCase(params, ['auth0Client']);
-	  params = parametersWhitelist.oauthAuthorizeParams(params);
+	  params = parametersWhitelist.oauthAuthorizeParams(this.warn, params);
 	
 	  qString = qs.build(params);
 	
@@ -1922,7 +1946,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	
 	  body = objectHelper.toSnakeCase(body, ['auth0Client']);
-	  body = parametersWhitelist.oauthTokenParams(body);
+	  body = parametersWhitelist.oauthTokenParams(this.warn, body);
 	
 	  body.grant_type = body.grant_type;
 	
@@ -2090,10 +2114,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var base64 = __webpack_require__(10);
+	var base64 = __webpack_require__(11);
 	
 	function padding(str) {
 	  var mod = (str.length % 4);
@@ -2143,7 +2167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	function buildResponse(error, description) {
@@ -2164,18 +2188,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	module.exports = { raw:'8.1.1' };
-
-
-/***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var random = __webpack_require__(39);
-	var storage = __webpack_require__(40);
+	var random = __webpack_require__(44);
+	var storage = __webpack_require__(45);
 	
 	var DEFAULT_NAMESPACE = 'com.auth0.auth.';
 	
@@ -3418,8 +3435,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
-	var base64 = __webpack_require__(11);
-	var request = __webpack_require__(12);
+	var base64 = __webpack_require__(12);
+	var request = __webpack_require__(13);
 	
 	function process(jwks) {
 	  var modulus = base64.decodeToHEX(jwks.n);
@@ -3548,7 +3565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var RSAVerifier = __webpack_require__(24);
-	var base64 = __webpack_require__(11);
+	var base64 = __webpack_require__(12);
 	var jwks = __webpack_require__(23);
 	var error = __webpack_require__(22);
 	var DummyCache = __webpack_require__(21);
@@ -5079,7 +5096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Boolean}
 	 * @api private
 	 */
-	var isObject = __webpack_require__(7);
+	var isObject = __webpack_require__(9);
 	
 	function isFunction(fn) {
 	  var tag = isObject(fn) ? Object.prototype.toString.call(fn) : '';
@@ -5096,7 +5113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Module of mixed-in functions shared between node and client code
 	 */
-	var isObject = __webpack_require__(7);
+	var isObject = __webpack_require__(9);
 	
 	/**
 	 * Expose `RequestBase`.
@@ -5137,10 +5154,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	RequestBase.prototype.clearTimeout = function _clearTimeout(){
-	  this._timeout = 0;
-	  this._responseTimeout = 0;
 	  clearTimeout(this._timer);
 	  clearTimeout(this._responseTimeoutTimer);
+	  delete this._timer;
+	  delete this._responseTimeoutTimer;
 	  return this;
 	};
 	
@@ -5222,6 +5239,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._responseTimeout = options.response;
 	  }
 	  return this;
+	};
+	
+	/**
+	 * Set number of retry attempts on error.
+	 *
+	 * Failed requests will be retried 'count' times if timeout or err.code >= 500.
+	 *
+	 * @param {Number} count
+	 * @return {Request} for chaining
+	 * @api public
+	 */
+	
+	RequestBase.prototype.retry = function retry(count){
+	  // Default to 1 if no count passed or true
+	  if (arguments.length === 0 || count === true) count = 1;
+	  if (count <= 0) count = 0;
+	  this._maxRetries = count;
+	  this._retries = 0;
+	  return this;
+	};
+	
+	/**
+	 * Retry request
+	 *
+	 * @return {Request} for chaining
+	 * @api private
+	 */
+	
+	RequestBase.prototype._retry = function() {
+	  this.clearTimeout();
+	
+	  // node
+	  if (this.req) {
+	    this.req = null;
+	    this.req = this.request();
+	  }
+	
+	  this._aborted = false;
+	  this.timedout = false;
+	
+	  return this._end();
 	};
 	
 	/**
@@ -5646,7 +5704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Module dependencies.
 	 */
 	
-	var utils = __webpack_require__(30);
+	var utils = __webpack_require__(31);
 	
 	/**
 	 * Expose `ResponseBase`.
@@ -5780,6 +5838,33 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 30 */
 /***/ function(module, exports) {
 
+	var ERROR_CODES = [
+	  'ECONNRESET',
+	  'ETIMEDOUT',
+	  'EADDRINFO',
+	  'ESOCKETTIMEDOUT'
+	];
+	
+	/**
+	 * Determine if a request should be retried.
+	 * (Borrowed from segmentio/superagent-retry)
+	 *
+	 * @param {Error} err
+	 * @param {Response} [res]
+	 * @returns {Boolean}
+	 */
+	module.exports = function shouldRetry(err, res) {
+	  if (err && err.code && ~ERROR_CODES.indexOf(err.code)) return true;
+	  if (res && res.status && res.status >= 500) return true;
+	  // Superagent timeout
+	  if (err && 'timeout' in err && err.code == 'ECONNABORTED') return true;
+	  return false;
+	};
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
 	
 	/**
 	 * Return the mime type for the given `str`.
@@ -5849,9 +5934,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return header;
 	};
 
-
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	var WinChan = (function() {
@@ -6162,14 +6246,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 32 */
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
 	var objectHelper = __webpack_require__(1);
-	var assert = __webpack_require__(2);
-	var responseHandler = __webpack_require__(5);
+	var assert = __webpack_require__(4);
+	var responseHandler = __webpack_require__(6);
 	
 	function DBConnection(request, options) {
 	  this.baseOptions = options;
@@ -6243,15 +6330,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 33 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
 	var objectHelper = __webpack_require__(1);
-	var assert = __webpack_require__(2);
-	var qs = __webpack_require__(8);
-	var responseHandler = __webpack_require__(5);
+	var assert = __webpack_require__(4);
+	var qs = __webpack_require__(5);
+	var responseHandler = __webpack_require__(6);
 	
 	function PasswordlessAuthentication(request, options) {
 	  this.baseOptions = options;
@@ -6401,11 +6488,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 34 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var windowHandler = __webpack_require__(4);
-	var base64Url = __webpack_require__(14);
+	var windowHandler = __webpack_require__(2);
+	var base64Url = __webpack_require__(15);
 	
 	function create(name, value, days) {
 	  var date;
@@ -6465,10 +6552,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 35 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var windowHelper = __webpack_require__(4);
+	var windowHelper = __webpack_require__(2);
 	
 	function IframeHandler(options) {
 	  this.auth0 = options.auth0;
@@ -6536,7 +6623,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	IframeHandler.prototype.callbackHandler = function (result) {
 	  var error = null;
 	
-	  if (result.error) {
+	  if (result && result.error) {
 	    error = result;
 	    result = null;
 	  }
@@ -6572,7 +6659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/* eslint-disable no-continue */
@@ -6617,7 +6704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 37 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var objectHelper = __webpack_require__(1);
@@ -6649,6 +6736,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'auth0Client',
 	  'owp',
 	  'device',
+	
+	  'protocol',
+	  '_csrf',
+	  '_intstate',
+	
 	// oauth2
 	  'client_id',
 	  'response_type',
@@ -6674,11 +6766,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'code_challenge_method'
 	];
 	
-	function oauthAuthorizeParams(params) {
-	  return objectHelper.pick(params, authorizeParams);
+	function oauthAuthorizeParams(warn, params) {
+	  var notAllowed = objectHelper.getKeysNotIn(params, authorizeParams);
+	
+	  if (notAllowed.length > 0) {
+	    warn.warning('Following parameters are not allowed on the `/authorize` endpoing: [' + notAllowed.join(',') + ']');
+	  }
+	
+	  return params;
 	}
 	
-	function oauthTokenParams(params) {
+	function oauthTokenParams(warn, params) {
 	  return objectHelper.pick(params, tokenParams);
 	}
 	
@@ -6689,29 +6787,58 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 38 */
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var version = __webpack_require__(7);
+	
+	function PluginHandler(webAuth, plugins) {
+	  this.plugins = plugins;
+	
+	  for (var a = 0; a < this.plugins.length; a++) {
+	    if (this.plugins[a].version !== version.raw) {
+	      var pluginName = '';
+	
+	      if (this.plugins[a].constructor && this.plugins[a].constructor.name) {
+	        pluginName = this.plugins[a].constructor.name;
+	      }
+	
+	      throw new Error('Plugin ' + pluginName + ' version (' + this.plugins[a].version + ') ' +
+	        'is not compatible with the SDK version (' + version.raw + ')');
+	    }
+	
+	    this.plugins[a].setWebAuth(webAuth);
+	  }
+	}
+	
+	PluginHandler.prototype.get = function (extensibilityPoint) {
+	  for (var a = 0; a < this.plugins.length; a++) {
+	    if (this.plugins[a].supports(extensibilityPoint)) {
+	      return this.plugins[a].init();
+	    }
+	  }
+	
+	  return null;
+	};
+	
+	module.exports = PluginHandler;
+
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* eslint-disable no-restricted-syntax */
 	/* eslint-disable guard-for-in */
-	var WinChan = __webpack_require__(31);
+	var WinChan = __webpack_require__(32);
 	
-	var windowHandler = __webpack_require__(4);
+	var windowHandler = __webpack_require__(2);
 	var objectHelper = __webpack_require__(1);
+	var qs = __webpack_require__(5);
 	
 	function PopupHandler() {
 	  this._current_popup = null;
 	}
-	
-	PopupHandler.prototype.stringifyPopupSettings = function (options) {
-	  var settings = '';
-	
-	  for (var key in options) {
-	    settings += key + '=' + options[key] + ',';
-	  }
-	
-	  return settings.slice(0, -1);
-	};
 	
 	PopupHandler.prototype.calculatePosition = function (options) {
 	  var width = options.width || 500;
@@ -6741,7 +6868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var popupPosition = this.calculatePosition(options.popupOptions || {});
 	  var popupOptions = objectHelper.merge(popupPosition).with(options.popupOptions);
 	  var url = options.url || 'about:blank';
-	  var windowFeatures = this.stringifyPopupSettings(popupOptions);
+	  var windowFeatures = qs.build(popupOptions, ',', false);
 	
 	  if (this._current_popup && !this._current_popup.closed) {
 	    return this._current_popup;
@@ -6765,7 +6892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var winchanOptions = {
 	    url: url,
 	    relay_url: relayUrl,
-	    window_features: this.stringifyPopupSettings(popupOptions),
+	    window_features: qs.build(popupOptions, ',', false),
 	    popup: this._current_popup,
 	    params: options
 	  };
@@ -6784,10 +6911,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 39 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var windowHelper = __webpack_require__(4);
+	var windowHelper = __webpack_require__(2);
 	
 	function randomString(length) {
 	  // eslint-disable-next-line
@@ -6815,10 +6942,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 40 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var StorageHandler = __webpack_require__(43);
+	var StorageHandler = __webpack_require__(48);
 	var storage;
 	
 	function getStorage(force) {
@@ -6847,10 +6974,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 41 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var cookies = __webpack_require__(34);
+	var cookies = __webpack_require__(38);
 	
 	function CookieStorage() {}
 	
@@ -6870,7 +6997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 42 */
+/* 47 */
 /***/ function(module, exports) {
 
 	function DummyStorage() {}
@@ -6885,13 +7012,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 43 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var windowHandler = __webpack_require__(4);
-	var DummyStorage = __webpack_require__(42);
-	var CookieStorage = __webpack_require__(41);
-	var Warn = __webpack_require__(6);
+	var windowHandler = __webpack_require__(2);
+	var DummyStorage = __webpack_require__(47);
+	var CookieStorage = __webpack_require__(46);
+	var Warn = __webpack_require__(8);
 	
 	function StorageHandler() {
 	  this.warn = new Warn({});
@@ -6945,14 +7072,31 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Authentication = __webpack_require__(14);
+	var Management = __webpack_require__(50);
+	var WebAuth = __webpack_require__(51);
+	var version = __webpack_require__(7);
+	
+	module.exports = {
+	  Authentication: Authentication,
+	  Management: Management,
+	  WebAuth: WebAuth,
+	  version: version.raw
+	};
+
+
+/***/ },
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
-	var RequestBuilder = __webpack_require__(9);
-	var assert = __webpack_require__(2);
-	var responseHandler = __webpack_require__(5);
+	var RequestBuilder = __webpack_require__(10);
+	var assert = __webpack_require__(4);
+	var responseHandler = __webpack_require__(6);
 	
 	/**
 	 * Auth0 Management API Client (methods allowed to be called from the browser only)
@@ -7052,33 +7196,35 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 45 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var IdTokenVerifier = __webpack_require__(25);
 	
-	var assert = __webpack_require__(2);
-	var error = __webpack_require__(15);
-	var qs = __webpack_require__(8);
-	var windowHelper = __webpack_require__(4);
+	var assert = __webpack_require__(4);
+	var error = __webpack_require__(16);
+	var qs = __webpack_require__(5);
+	var PluginHandler = __webpack_require__(42);
+	var windowHelper = __webpack_require__(2);
 	var objectHelper = __webpack_require__(1);
 	var TransactionManager = __webpack_require__(17);
-	var Authentication = __webpack_require__(13);
-	var Redirect = __webpack_require__(47);
-	var Popup = __webpack_require__(46);
-	var SilentAuthenticationHandler = __webpack_require__(48);
+	var Authentication = __webpack_require__(14);
+	var Redirect = __webpack_require__(53);
+	var Popup = __webpack_require__(52);
+	var SilentAuthenticationHandler = __webpack_require__(54);
 	
 	/**
 	 * Handles all the browser's authentication flows
 	 * @constructor
 	 * @param {Object} options
-	 * @param {Object} options.domain
-	 * @param {Object} options.clienID
-	 * @param {Object} options.responseType
-	 * @param {Object} options.responseMode
-	 * @param {Object} options.scope
-	 * @param {Object} options.audience
-	 * @param {Object} options._disableDeprecationWarnings
+	 * @param {String} options.domain
+	 * @param {String} options.clienID
+	 * @param {String} options.responseType
+	 * @param {String} options.responseMode
+	 * @param {String} options.scope
+	 * @param {String} options.audience
+	 * @param {Array} options.plugins
+	 * @param {Boolean} options._disableDeprecationWarnings
 	 */
 	function WebAuth(options) {
 	  /* eslint-disable */
@@ -7091,6 +7237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    scope: { optional: true, type: 'string', message: 'scope is not valid' },
 	    audience: { optional: true, type: 'string', message: 'audience is not valid' },
 	    leeway: { optional: true, type: 'number', message: 'leeway is not valid' },
+	    plugins: { optional: true, type: 'array', message: 'plugins is not valid'},
 	    _disableDeprecationWarnings: { optional: true, type: 'boolean', message: '_disableDeprecationWarnings option is not valid' },
 	    _sendTelemetry: { optional: true, type: 'boolean', message: '_sendTelemetry option is not valid' },
 	    _telemetryInfo: { optional: true, type: 'object', message: '_telemetryInfo option is not valid' }
@@ -7105,6 +7252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /* eslint-enable */
 	
 	  this.baseOptions = options;
+	  this.baseOptions.plugins = new PluginHandler(this, this.baseOptions.plugins || []);
 	
 	  this.baseOptions._sendTelemetry = this.baseOptions._sendTelemetry === false ?
 	                                        this.baseOptions._sendTelemetry : true;
@@ -7131,6 +7279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @method parseHash
 	 * @param {Object} options:
+	 * @param {String} options._idTokenVerification [OPTIONAL] default: true.
 	 * @param {String} options.state [OPTIONAL] to verify the response
 	 * @param {String} options.nonce [OPTIONAL] to verify the id_token
 	 * @param {String} options.hash [OPTIONAL] the url hash. If not provided it will extract from window.location.hash
@@ -7150,6 +7299,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } else {
 	    options = options || {};
 	  }
+	
+	  options._idTokenVerification = (options._idTokenVerification === false ? false : true);
 	
 	  var _window = windowHelper.getWindow();
 	
@@ -7181,17 +7332,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	  transactionState = options.state || (transaction && transaction.state) || null;
 	
 	  if (parsedQs.id_token) {
-	    this.validateToken(
-	      parsedQs.id_token,
-	      transactionState,
-	      transactionNonce,
-	      function (validationError, payload) {
-	        if (validationError) {
-	          return cb(validationError);
-	        }
+	    if (options._idTokenVerification) {
+	      return this.validateToken(
+	        parsedQs.id_token,
+	        transactionState,
+	        transactionNonce,
+	        function (validationError, payload) {
+	          if (validationError) {
+	            return cb(validationError);
+	          }
 	
-	        return cb(null, buildParseHashResponse(parsedQs, (transaction && transaction.appStatus) || null, payload));
+	          return cb(null, buildParseHashResponse(parsedQs, (transaction && transaction.appStatus) || null, payload));
+	        });
+	    } else {
+	      var verifier = new IdTokenVerifier({
+	        issuer: this.baseOptions.token_issuer,
+	        audience: this.baseOptions.clientID,
+	        leeway: this.baseOptions.leeway || 0,
+	        __disableExpirationCheck: this.baseOptions.__disableExpirationCheck
 	      });
+	
+	      var decoded = verifier.decode(parsedQs.id_token);
+	      return cb(null, buildParseHashResponse(parsedQs, (transaction && transaction.appStatus) || null, decoded.payload));
+	    }
 	  } else {
 	    cb(null, buildParseHashResponse(parsedQs, (transaction && transaction.appStatus) || null, null));
 	  }
@@ -7417,16 +7580,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 46 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
-	var assert = __webpack_require__(2);
-	var responseHandler = __webpack_require__(5);
-	var PopupHandler = __webpack_require__(38);
+	var assert = __webpack_require__(4);
+	var responseHandler = __webpack_require__(6);
+	var PopupHandler = __webpack_require__(43);
 	var objectHelper = __webpack_require__(1);
-	var Warn = __webpack_require__(6);
+	var Warn = __webpack_require__(8);
 	var TransactionManager = __webpack_require__(17);
 	
 	function Popup(client, options) {
@@ -7439,6 +7602,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	}
 	
+	
+	/**
+	 * Returns a new instance of the popup handler
+	 *
+	 * @method buildPopupHandler
+	 */
+	Popup.prototype.buildPopupHandler = function () {
+	  var pluginHandler = this.baseOptions.plugins.get('popup.getPopupHandler');
+	
+	  if (pluginHandler) {
+	    return pluginHandler.getPopupHandler();
+	  }
+	
+	  return new PopupHandler();
+	};
+	
 	/**
 	 * Initializes the popup window and returns the instance to be used later in order to avoid being blocked by the browser.
 	 *
@@ -7446,8 +7625,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Object} options: receives the window height and width and any other window feature to be sent to window.open
 	 */
 	Popup.prototype.preload = function (options) {
-	  var popup = new PopupHandler();
-	  popup.preload(options || {});
+	  options = options || {};
+	
+	  var popup = this.buildPopupHandler();
+	
+	  popup.preload(options);
 	  return popup;
 	};
 	
@@ -7460,7 +7642,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  if (options.popupHandler) {
 	    return options.popupHandler;
 	  }
-	  return preload ? this.preload(options) : new PopupHandler();
+	
+	  if (preload) {
+	    return this.preload(options);
+	  }
+	
+	  return this.buildPopupHandler();
 	};
 	
 	/**
@@ -7475,9 +7662,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var url;
 	  var relayUrl;
 	
+	  var pluginHandler = this.baseOptions.plugins.get('popup.authorize');
+	
 	  var params = objectHelper.merge(this.baseOptions, [
 	    'clientID',
 	    'scope',
+	    'domain',
 	    'audience',
 	    'responseType'
 	  ]).with(objectHelper.blacklist(options, ['popupHandler']));
@@ -7486,17 +7676,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    responseType: { type: 'string', message: 'responseType option is required' }
 	  });
 	
+	  relayUrl = urljoin(this.baseOptions.rootUrl, 'relay.html');
+	
 	  // used by server to render the relay page instead of sending the chunk in the
 	  // url to the callback
 	  params.owp = true;
+	  params.redirectUri = undefined;
+	
+	  if (pluginHandler) {
+	    params = pluginHandler.processParams(params);
+	  }
 	
 	  params = this.transactionManager.process(params);
+	
+	  delete params.domain;
 	
 	  url = this.client.buildAuthorizeUrl(params);
 	
 	  popup = this.getPopupHandler(options);
-	
-	  relayUrl = urljoin(this.baseOptions.rootUrl, 'relay.html');
 	
 	  return popup.load(url, relayUrl, {}, responseHandler(cb));
 	};
@@ -7609,13 +7806,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var UsernamePassword = __webpack_require__(49);
+	var UsernamePassword = __webpack_require__(55);
 	var objectHelper = __webpack_require__(1);
-	var Warn = __webpack_require__(6);
-	var assert = __webpack_require__(2);
+	var Warn = __webpack_require__(8);
+	var assert = __webpack_require__(4);
 	
 	function Redirect(client, options) {
 	  this.baseOptions = options;
@@ -7683,10 +7880,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 48 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var IframeHandler = __webpack_require__(35);
+	var IframeHandler = __webpack_require__(39);
 	
 	function SilentAuthenticationHandler(auth0, authenticationUrl, timeout) {
 	  this.auth0 = auth0;
@@ -7717,15 +7914,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var urljoin = __webpack_require__(3);
 	
 	var objectHelper = __webpack_require__(1);
-	var RequestBuilder = __webpack_require__(9);
-	var responseHandler = __webpack_require__(5);
-	var windowHelper = __webpack_require__(4);
+	var RequestBuilder = __webpack_require__(10);
+	var responseHandler = __webpack_require__(6);
+	var windowHelper = __webpack_require__(2);
 	
 	function UsernamePassword(options) {
 	  this.baseOptions = options;
