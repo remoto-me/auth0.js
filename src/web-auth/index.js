@@ -200,7 +200,11 @@ WebAuth.prototype.renewAuth = function (options, cb) {
     'redirectUri',
     'responseType',
     'scope',
-    'audience'
+    'audience',
+    '_csrf',
+    'state',
+    '_instate',
+    'nonce'
   ]).with(options);
 
   params.responseType = params.responseType || 'token';
@@ -292,7 +296,11 @@ WebAuth.prototype.authorize = function (options) {
     'responseMode',
     'redirectUri',
     'scope',
-    'audience'
+    'audience',
+    '_csrf',
+    'state',
+    '_instate',
+    'nonce'
   ]).with(options);
 
   assert.check(params, { type: 'object', message: 'options parameter is not valid' }, {
