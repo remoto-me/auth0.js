@@ -335,18 +335,15 @@ Authentication.prototype.userInfo = function (accessToken, cb) {
 };
 
 /**
- * Makes a call to the `/delegation` endpoint
+ * Makes a call to the `/delegation` endpoint.
  *
  * @method delegation
  * @param {Object} options: https://auth0.com/docs/api/authentication#!#post--delegation
  * @param {Function} cb
- * @deprecated `delegation` will be soon deprecated.
  */
 Authentication.prototype.delegation = function (options, cb) {
   var url;
   var body;
-
-  this.warn.warning('`delegation` will be soon deprecated.');
 
   assert.check(options, { type: 'object', message: 'options parameter is not valid' }, {
     grant_type: { type: 'string', message: 'grant_type option is required' }
