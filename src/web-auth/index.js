@@ -458,7 +458,7 @@ WebAuth.prototype.passwordlessVerify = function (options, cb) {
     if (err) {
       return cb(err);
     }
-    return windowHelper.redirect(_this.client.passwordless.buildVerifyUrl(options));
+    return cb(null, _this.client.passwordless.buildVerifyUrl(options));
   });
 };
 
